@@ -19,9 +19,7 @@ class LabelFactory
             $data[] = (new LabelFactory($this->type))->get($i);
         }
 
-        $header = array_keys($data[0]);
-
-        return [$header, $data];
+        return $data;
     }
 
     public function get($serial = 1)

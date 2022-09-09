@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Utility\LabelFactory;
-use Cake\Chronos\Chronos;
+use App\Utility\ViewCreator;
 use Cake\Core\Configure;
 use Cake\Http\Client;
 use Cake\Network\Socket;
-use Cake\Routing\Router;
 use Cake\View\ViewBuilder;
-use CsvView\View\CsvView;
-use Faker\Factory;
 
 /**
  * Printing Controller
@@ -23,21 +20,9 @@ class PrintingController extends AppController
     public function socket($count = 1)
     {
 
-        [$header, $data] = (new LabelFactory('socket'))->make($count);
+        $data = (new LabelFactory('socket'))->make($count);
 
-        $vb = new ViewBuilder();
-
-        $vb->setClassName('CsvView.Csv')
-            ->setOptions([
-                'serialize' => 'data',
-                'header' => $header
-            ]);
-
-        $view = $vb->build();
-
-        $view->set(compact('data'));
-
-        $send = $view->render();
+        $content = (new ViewCreator())->csv($data);
 
         $url = Configure::read('NiceLabel.SOCKET_URL');
 
@@ -55,31 +40,20 @@ class PrintingController extends AppController
                 ->withType('text');
         }
 
-        $socket->write($send);
+        $socket->write($content);
 
         $socket->disconnect();
 
         return $this->getResponse()
-            ->withStringBody("sent to $url\n\n" . $send)
+            ->withStringBody("sent to $url\n\n" . $content)
             ->withType('text');
     }
 
     public function http($count = 1)
     {
-        [$header, $data] = (new LabelFactory('http_client'))->make($count);
+        $data = (new LabelFactory('http_client'))->make($count);
 
-        $vb = new ViewBuilder();
-
-        $vb->setClassName('Xml')
-            ->setOptions([
-                'serialize' => 'data'
-            ]);
-
-        $view = $vb->build();
-
-        $view->set(compact('data'));
-
-        $send = $view->render();
+        $content = (new ViewCreator())->xml($data);
 
         $url = Configure::read('NiceLabel.HTTP_CLIENT_URL');
 
@@ -88,7 +62,7 @@ class PrintingController extends AppController
         $client->setConfig('timeout', 2);
 
         try {
-            $response = $client->post($url, $send, ['type' => 'xml']);
+            $response = $client->post($url, $content, ['type' => 'xml']);
         } catch (\Cake\Http\Client\Exception\NetworkException  $e) {
             return $this->getResponse()
                 ->withStringBody("Returned Exception Message: " . $e->getMessage())
@@ -97,8 +71,8 @@ class PrintingController extends AppController
 
         if ($response->isOk()) {
             return $this->getResponse()
-                ->withStringBody($response->getXml()->asXML())
-                ->withType('xml');
+                ->withStringBody('<pre>' . htmlentities($response->getXml()->asXML()) . '</pre>')
+                ->withType('html');
         }
 
         return $this->getResponse()
