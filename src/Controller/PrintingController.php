@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Utility\LabelFactory;
 use Cake\Chronos\Chronos;
+use Cake\Core\Configure;
 use Cake\Http\Client;
 use Cake\Network\Socket;
 use Cake\Routing\Router;
@@ -19,9 +20,10 @@ use Faker\Factory;
  */
 class PrintingController extends AppController
 {
-    public function socket()
+    public function socket($count = 1)
     {
-        [$header, $data] = (new LabelFactory())->make();
+
+        [$header, $data] = (new LabelFactory('socket'))->make($count);
 
         $vb = new ViewBuilder();
 
@@ -37,7 +39,7 @@ class PrintingController extends AppController
 
         $send = $view->render();
 
-        $url = 'tcp://10.197.3.140:11973';
+        $url = Configure::read('NiceLabel.SOCKET_URL');
 
         $config = parse_url($url);
 
@@ -62,16 +64,14 @@ class PrintingController extends AppController
             ->withType('text');
     }
 
-    public function http()
+    public function http($count = 1)
     {
-
-        [$header, $data] = (new LabelFactory())->make(1);
+        [$header, $data] = (new LabelFactory('http_client'))->make($count);
 
         $vb = new ViewBuilder();
 
         $vb->setClassName('Xml')
             ->setOptions([
-                // 'rootNode' => 'hiJames',
                 'serialize' => 'data'
             ]);
 
@@ -81,15 +81,28 @@ class PrintingController extends AppController
 
         $send = $view->render();
 
-        $url = 'http://10.197.3.140:56425/palletPrint';
-
+        $url = Configure::read('NiceLabel.HTTP_CLIENT_URL');
 
         $client = new Client();
 
-        $response = $client->post($url, $send, ['type' => 'xml']);
+        $client->setConfig('timeout', 2);
+
+        try {
+            $response = $client->post($url, $send, ['type' => 'xml']);
+        } catch (\Cake\Http\Client\Exception\NetworkException  $e) {
+            return $this->getResponse()
+                ->withStringBody("Returned Exception Message: " . $e->getMessage())
+                ->withType('text');
+        }
+
+        if ($response->isOk()) {
+            return $this->getResponse()
+                ->withStringBody($response->getXml()->asXML())
+                ->withType('xml');
+        }
 
         return $this->getResponse()
-            ->withStringBody($response->getXml()->asXML())
-            ->withType('xml');
+            ->withStringBody((string) $response->getStatusCode())
+            ->withType('text');
     }
 }

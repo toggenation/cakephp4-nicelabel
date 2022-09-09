@@ -8,12 +8,15 @@ use Faker\Factory;
 class LabelFactory
 {
 
+    public function __construct(protected string $type = 'socket')
+    {
+    }
     public function make($count = 1)
     {
         $data = [];
 
         for ($i = 1; $i <= $count; $i++) {
-            $data[] = (new LabelFactory())->get($i);
+            $data[] = (new LabelFactory($this->type))->get($i);
         }
 
         $header = array_keys($data[0]);
@@ -48,7 +51,8 @@ class LabelFactory
             'best_before_human_readable' => $bestBefore->format('d.m.y'),
             'best_before_barcode' => $bestBefore->format('ymd'),
             'label_copies' => 2,
-            'output_filename' => Chronos::now()->format('Ymdhhss') . '-' . $serial . '.pdf'
+            'output_filename' => $this->type . '-' .
+                Chronos::now()->format('Ymdhhss') . '-' . $serial . '.pdf'
         ];
     }
 }
