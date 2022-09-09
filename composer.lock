@@ -6726,12 +6726,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/toggenation/fake-barcode.git",
-                "reference": "0486c4b23bf04e0bf8ff15e9c4fcbaf96483192d"
+                "reference": "1c836f6f9de8dabbbf796407f6a903fd1d3c116d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toggenation/fake-barcode/zipball/0486c4b23bf04e0bf8ff15e9c4fcbaf96483192d",
-                "reference": "0486c4b23bf04e0bf8ff15e9c4fcbaf96483192d",
+                "url": "https://api.github.com/repos/toggenation/fake-barcode/zipball/1c836f6f9de8dabbbf796407f6a903fd1d3c116d",
+                "reference": "1c836f6f9de8dabbbf796407f6a903fd1d3c116d",
                 "shasum": ""
             },
             "require": {
@@ -6783,8 +6783,8 @@
             ],
             "authors": [
                 {
-                    "name": "Peter Elmered",
-                    "email": "peter@elmered.com"
+                    "name": "James McDonald",
+                    "email": "james@toggen.com.au"
                 }
             ],
             "description": "Fake-Barcode is a Faker provider that generates fake GS1 pallet barcode data for you.",
@@ -6798,7 +6798,7 @@
             "support": {
                 "source": "https://github.com/toggenation/fake-barcode/tree/main"
             },
-            "time": "2022-09-09T00:57:05+00:00"
+            "time": "2022-09-09T03:03:14+00:00"
         },
         {
             "name": "twig/markdown-extra",

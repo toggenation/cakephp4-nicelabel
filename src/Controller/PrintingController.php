@@ -17,9 +17,12 @@ use Cake\View\ViewBuilder;
  */
 class PrintingController extends AppController
 {
+    public function label()
+    {
+    }
     public function socket($count = 1)
     {
-
+        $this->request->allowMethod('POST');
         $data = (new LabelFactory('socket'))->make($count);
 
         $content = (new ViewCreator())->csv($data);
@@ -35,22 +38,23 @@ class PrintingController extends AppController
         try {
             $socket->connect();
         } catch (\Cake\Network\Exception\SocketException $e) {
-            return $this->getResponse()
-                ->withStringBody($e->getMessage())
-                ->withType('text');
+            $this->Flash->error("Returned Exception Message: " . $e->getMessage());
+            return $this->redirect(['action' => 'label']);
         }
 
         $socket->write($content);
 
         $socket->disconnect();
 
-        return $this->getResponse()
-            ->withStringBody("sent to $url\n\n" . $content)
-            ->withType('text');
+        $this->Flash->success("sent to $url\n\n" . $content);
+
+        $this->viewBuilder()->setTemplate('socket_http');
     }
 
     public function http($count = 1)
     {
+        $this->request->allowMethod('POST');
+
         $data = (new LabelFactory('http_client'))->make($count);
 
         $content = (new ViewCreator())->xml($data);
@@ -59,14 +63,13 @@ class PrintingController extends AppController
 
         $client = new Client();
 
-        $client->setConfig('timeout', 2);
+        $client->setConfig('timeout', 1);
 
         try {
             $response = $client->post($url, $content, ['type' => 'xml']);
         } catch (\Cake\Http\Client\Exception\NetworkException  $e) {
-            return $this->getResponse()
-                ->withStringBody("Returned Exception Message: " . $e->getMessage())
-                ->withType('text');
+            $this->Flash->error("Returned Exception Message: " . $e->getMessage());
+            return $this->redirect(['action' => 'label']);
         }
 
         if ($response->isOk()) {
