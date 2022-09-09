@@ -1,9 +1,8 @@
-# Browsershot in CakePHP 4
+# Nicelabel in CakePHP 4
 
 ## Features
+* Calling Nicelabel Easy using TCP & `Cake\Network\Socket`
+* Posting to Nicelabel Enterprise using HTTP & `Cake\Http\Client`
 
-* Using Browsershot when CakePHP Authentication is enabled
-* Provide View PDF & Download Option
-* Customizing the Download & In Browser View filename
 
 
