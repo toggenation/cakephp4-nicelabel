@@ -59,7 +59,7 @@ class PrintingController extends AppController
 
         $content = (new ViewCreator())->xml($data);
 
-        $url = Configure::read('NiceLabel.HTTP_CLIENT_URL');
+        $url = Configure::read('NiceLabel.HTTP_URL');
 
         $client = new Client();
 

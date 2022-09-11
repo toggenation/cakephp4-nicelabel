@@ -34,6 +34,7 @@ require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Configure\Engine\JsonConfig;
 use Cake\Core\Configure\Engine\PhpConfig;
 use Cake\Database\Type\StringType;
 use Cake\Database\TypeFactory;
@@ -92,6 +93,15 @@ try {
 if (file_exists(CONFIG . 'app_local.php')) {
     Configure::load('app_local', 'default');
 }
+
+try {
+    Configure::config('json', new JsonConfig());
+    Configure::load('toggen', 'json', false);
+} catch (\Exception $e) {
+    exit($e->getMessage() . "\n");
+}
+
+
 
 /*
  * When debug = true the metadata cache should only last
@@ -223,11 +233,3 @@ TypeFactory::map('time', StringType::class);
 //Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
-
-
-try {
-    Configure::config('toggen', new PhpConfig());
-    Configure::load('toggen', 'toggen');
-} catch (\Exception $e) {
-    exit($e->getMessage() . "\n");
-}
