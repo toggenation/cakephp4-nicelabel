@@ -62,6 +62,14 @@ namespace PHPSTORM_META {
 		argumentsSet('entityFields:App\Model\Entity\User')
 	);
 
+	override(
+		\Authentication\AuthenticationService::loadIdentifier(0),
+		map([
+			'Authentication.Password' => \Authentication\Identifier\PasswordIdentifier::class,
+			'Authentication.Token' => \Authentication\Identifier\TokenIdentifier::class,
+		])
+	);
+
 	expectedArguments(
 		\Cake\Cache\Cache::add(),
 		2,
@@ -211,8 +219,10 @@ namespace PHPSTORM_META {
 			'Authentication' => \Cake\Http\BaseApplication::class,
 			'Bake' => \Cake\Http\BaseApplication::class,
 			'Cake/TwigView' => \Cake\Http\BaseApplication::class,
+			'CsvView' => \Cake\Http\BaseApplication::class,
 			'DebugKit' => \Cake\Http\BaseApplication::class,
 			'IdeHelper' => \Cake\Http\BaseApplication::class,
+			'IdeHelperExtra' => \Cake\Http\BaseApplication::class,
 			'Migrations' => \Cake\Http\BaseApplication::class,
 		])
 	);
@@ -289,6 +299,7 @@ namespace PHPSTORM_META {
 	override(
 		\Cake\Datasource\QueryInterface::find(0),
 		map([
+			'active' => \Cake\ORM\Query::class,
 			'all' => \Cake\ORM\Query::class,
 			'enabled' => \Cake\ORM\Query::class,
 			'list' => \Cake\ORM\Query::class,
@@ -312,6 +323,7 @@ namespace PHPSTORM_META {
 	override(
 		\Cake\ORM\Association::find(0),
 		map([
+			'active' => \Cake\ORM\Query::class,
 			'all' => \Cake\ORM\Query::class,
 			'enabled' => \Cake\ORM\Query::class,
 			'list' => \Cake\ORM\Query::class,
@@ -369,6 +381,7 @@ namespace PHPSTORM_META {
 	override(
 		\Cake\ORM\Table::find(0),
 		map([
+			'active' => \Cake\ORM\Query::class,
 			'all' => \Cake\ORM\Query::class,
 			'enabled' => \Cake\ORM\Query::class,
 			'list' => \Cake\ORM\Query::class,
@@ -856,6 +869,7 @@ namespace PHPSTORM_META {
 		'VSCODE_GIT_ASKPASS_NODE',
 		'VSCODE_GIT_IPC_HANDLE',
 		'VSCODE_IPC_HOOK_CLI',
+		'XDEBUG_MODE',
 		'argc',
 		'argv'
 	);
@@ -950,6 +964,12 @@ namespace PHPSTORM_META {
 		'Error.log',
 		'Error.skipLog',
 		'Error.trace',
+		'IdeHelper',
+		'IdeHelper.generatorTasks',
+		'IdeHelper.generatorTasks.IdeHelperExtra\Authentication\Generator\Task\AuthServiceLoadIdentifierTask',
+		'NiceLabel',
+		'NiceLabel.HTTP_CLIENT_URL',
+		'NiceLabel.SOCKET_URL',
 		'Security',
 		'Session',
 		'Session.defaults',
@@ -958,8 +978,10 @@ namespace PHPSTORM_META {
 		'plugins.Authentication',
 		'plugins.Bake',
 		'plugins.Cake/TwigView',
+		'plugins.CsvView',
 		'plugins.DebugKit',
 		'plugins.IdeHelper',
+		'plugins.IdeHelperExtra',
 		'plugins.Migrations'
 	);
 
@@ -990,6 +1012,9 @@ namespace PHPSTORM_META {
 		'Pages::display',
 		'Pdf::create',
 		'Pdf::html',
+		'Printing::http',
+		'Printing::label',
+		'Printing::socket',
 		'Users::add',
 		'Users::delete',
 		'Users::edit',
@@ -1010,12 +1035,4 @@ namespace PHPSTORM_META {
 		'update'
 	);
 
-	// Added by James
-	override(
-		\Authentication\AuthenticationService::loadIdentifier(0),
-		map([
-			'Authentication.Password' => \Authentication\Identifier\PasswordIdentifier::class,
-			'Authentication.Token' => \Authentication\Identifier\TokenIdentifier::class,
-		])
-	);
 }

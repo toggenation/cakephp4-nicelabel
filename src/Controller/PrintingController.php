@@ -8,6 +8,7 @@ use App\Utility\LabelFactory;
 use App\Utility\ViewCreator;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Event\EventInterface;
 use Cake\Http\Client;
 use Cake\Network\Socket;
 use Cake\View\ViewBuilder;
@@ -19,30 +20,29 @@ use DOMDocument;
  */
 class PrintingController extends AppController
 {
+
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+        $redirect = $this->request->is('GET') &&
+            in_array($this->request->getParam('action'), ['socket', 'http']);
 
-        if (
-            $this->request->is("GET") &&
-            in_array($this->request->getParam('action'), ['socket', 'http'])
-        ) {
+        if ($redirect) {
             return $this->redirect(['action' => 'label']);
         }
     }
-
-    public function label()
+    public function label($count = 1)
     {
+        $data = (new LabelFactory('socket'))->make($count);
+
+        $this->set(compact('data'));
     }
-
-
     public function socket($count = 1)
     {
         $this->request->allowMethod('POST');
 
-        $data = (new LabelFactory('socket'))->make($count);
-
-        $content = (new ViewCreator())->csv($data);
+        $content = (new ViewCreator())
+            ->csv($this->request->getData());
 
         $url = Configure::read('NiceLabel.SOCKET_URL');
 
@@ -55,19 +55,17 @@ class PrintingController extends AppController
         try {
             $socket->connect();
         } catch (\Cake\Network\Exception\SocketException $e) {
-            $this->Flash->error("Returned Exception Message: " . $e->getMessage());
+            $this->Flash->error($e->getMessage());
+
+            return $this->redirect(['action' => 'label']);
         }
 
-        $bytes = $socket->write($content);
+
+        $socket->write($content);
 
         $socket->disconnect();
 
-        $this->Flash->highlight($url, [
-            'params' => [
-                'code' => print_r($data, true),
-                'result' => $bytes
-            ]
-        ]);
+        $this->Flash->success("Sent to $url\n\n" . $content);
 
         return $this->redirect(['action' => 'label']);
     }
@@ -76,11 +74,10 @@ class PrintingController extends AppController
     {
         $this->request->allowMethod('POST');
 
-        $data = (new LabelFactory('http_client'))->make($count);
+        $content = (new ViewCreator())
+            ->xml($this->request->getData());
 
-        $content = (new ViewCreator())->xml($data);
-
-        $url = Configure::read('NiceLabel.HTTP_URL');
+        $url = Configure::read('NiceLabel.HTTP_CLIENT_URL');
 
         $client = new Client();
 
@@ -88,30 +85,10 @@ class PrintingController extends AppController
 
         try {
             $response = $client->post($url, $content, ['type' => 'xml']);
+            $message = '<pre>' . htmlentities($response->getXml()->asXML()) . '</pre>';
+            $this->Flash->success($message);
         } catch (\Cake\Http\Client\Exception\NetworkException  $e) {
-            $this->Flash->error("Returned Exception Message: " . $e->getMessage());
-        }
-
-        if ($response->isOk()) {
-            $hl = new \Highlight\Highlighter();
-            $dom = new DOMDocument();
-            $dom->preserveWhiteSpace = false;
-            $dom->loadXML($response->getXml()->asXML());
-            $dom->formatOutput = true;
-            $result = $hl->highlight('xml', $dom->saveXML());
-
-            $php = $hl->highlight('php', print_r($data, true));
-
-
-            // dd($result);
-            $this->Flash->highlight($url, [
-                'params' => [
-                    'code' => "<code class=\"hljs {$php->language}\">"
-                        . $php->value . '</code>',
-                    'result' => "<code class=\"hljs {$result->language}\">"
-                        . $result->value . '</code>'
-                ]
-            ]);
+            $this->Flash->error($e->getMessage());
         }
 
         return $this->redirect(['action' => 'label']);
