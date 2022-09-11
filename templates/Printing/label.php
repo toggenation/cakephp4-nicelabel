@@ -1,3 +1,6 @@
+<?php
+$this->Html->css('default', ['block' => true]);
+?>
 <ul>
     <?php
 
