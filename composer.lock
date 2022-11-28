@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c13719887d8b62890672f153dcadb861",
+    "content-hash": "7faec6287a01b760776b4ae9cc482d9f",
     "packages": [
         {
             "name": "cakephp/authentication",
@@ -3856,16 +3856,16 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "v5.2.1",
+            "version": "v5.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "23e50829f958ea1d741d63e2781716be037e4644"
+                "reference": "cb021439c683d9805e2864c58095b92d405e9b11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/23e50829f958ea1d741d63e2781716be037e4644",
-                "reference": "23e50829f958ea1d741d63e2781716be037e4644",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/cb021439c683d9805e2864c58095b92d405e9b11",
+                "reference": "cb021439c683d9805e2864c58095b92d405e9b11",
                 "shasum": ""
             },
             "replace": {
@@ -3900,9 +3900,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/bootstrap/issues",
-                "source": "https://github.com/twbs/bootstrap/tree/v5.2.1"
+                "source": "https://github.com/twbs/bootstrap/tree/v5.2.3"
             },
-            "time": "2022-09-07T15:31:39+00:00"
+            "time": "2022-11-21T18:19:01+00:00"
         }
     ],
     "packages-dev": [
