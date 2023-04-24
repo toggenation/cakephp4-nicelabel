@@ -13,7 +13,7 @@
         "cboden/ratchet": "^0.4.4",
         "friendsofcake/cakephp-csvview": "^4.0",
         "mobiledetect/mobiledetectlib": "^2.8",
-        "scrivo/highlight.php": "v9.18.1.9",
+        "scrivo/highlight.php": "v9.18.1.10",
         "spatie/browsershot": "^3.57",
         "twbs/bootstrap": "^5.2"
     },
